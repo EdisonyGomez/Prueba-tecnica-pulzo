@@ -8,5 +8,5 @@ import { Character } from "../models/character";
 
 export abstract class CharacterRepository{
 
-    abstract getCharacters(): Observable<Character[]>;
+    abstract getCharacters(page: number , filters: {name?: string, status?: string, gender?: string} ): Observable<{info: any, results: Character[]}>;
 }

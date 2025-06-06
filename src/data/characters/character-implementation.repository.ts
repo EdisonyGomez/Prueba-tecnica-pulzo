@@ -14,8 +14,8 @@ export class CharacterRepositoryImpl extends CharacterRepository {
         super();
     }
 
-   override getCharacters(): Observable<Character[]> {
-        return this.charactersApi.getCharacters();
+   override getCharacters(page:number,filters: {name?: string, status?: string, gender?: string}): Observable<{info: any, results: Character[]}> {
+        return this.charactersApi.getCharacters(page, filters);
     } 
   
 

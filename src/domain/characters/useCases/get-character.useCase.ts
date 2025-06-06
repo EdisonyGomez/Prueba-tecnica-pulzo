@@ -10,8 +10,8 @@ export class GetCharacterUseCase {
 
     constructor(private characterRepository: CharacterRepository) { }
 
-    excecute(): Observable<Character[]> {
-        return this.characterRepository.getCharacters();
+    excecute(page: number , filters: {name?: string, status?: string, gender?: string} ): Observable<{info: any, results: Character[]}> {
+        return this.characterRepository.getCharacters(page, filters);
     }
 
 }

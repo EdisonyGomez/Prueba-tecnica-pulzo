@@ -2,3 +2,33 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@font-face {
+  font-family: 'RickAndMorty';
+  src: url('./assets/fonts/get_schwifty.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+html {
+    font-family: 'Nunito Sans Variable', system-ui, sans-serif;
+    scrollbar-color: #0a66c2 #1f1e1e;
+    scrollbar-width: thin;
+    scroll-behavior: smooth;
+
+}
+
+html,body {
+    height: 100%;
+}
+
+body {
+    margin: 0;
+    font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+@media (prefers-color-scheme: dark) {
+    html {
+        scrollbar-color: #0a66c2 #1f1e1e;
+    }
+}

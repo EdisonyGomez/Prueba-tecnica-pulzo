@@ -1,31 +1,227 @@
-<section class="text-slate-300 bg-[#000000] bg-[radial-gradient(#ffffff33_1px,#00091d_1px)] bg-[size:20px_20px]">
+<section class="min-h-screen text-slate-300 bg-[#000000] bg-[radial-gradient(#ffffff33_1px,#00091d_1px)] bg-[size:20px_20px]">
 
     <!-- cabecera principal con titulo -->
-    <header class="mb-6">
-        <h1 class="text-center text-6xl text-pretty font-semibold filter drop-shadow-[0_35px_35px_rgb(214, 138, 119)] ">
-            Personajes de Rick and Morty
-        </h1>
+    <header class="mb-6 pt-4 relative h-32 ">
+        <div class="title mt">Rick<span>and </span>Morty</div>
+        <div class="title middle"> Rick<span>and </span>Morty</div>
+        <div class="title bottom"> Rick<span>and </span>Morty</div>
     </header>
 
-    <!-- Cuerpo con las imagenes renderizadas con el titulo -->
-    <div class="container  w-screen gap-6 m-auto  ">
-        @for (character of characters; track character) {
-        <ul class=" flex flex-col justify-center m-auto text-center group">
-            <div loading="lazy" class="ff w-full relative mx-auto h-auto overflow-hidden rounded-lg ">
-                <img class="rounded-md transition-all duration-300 hover:scale-110" loading="lazy"
-                    src="{{character.image}}" alt="">
+    <!-- Barra de búsqueda y filtros -->
+    <section class="container w-full px-4 mb-8 flex justify-end  ">
+        <aside class="bg-gray-800/50 p-4 rounded-lg shadow-lg  
+              lg:flex gap-5 flex-wrap items-center lg:w-3/4
+              w-full">
+            <!-- Barra de búsqueda -->
+            <div class="mb-4">
+                <label for="search" class="block text-sm font-medium text-amber-400 mb-1">Buscar por nombre</label>
+                <input id="search" type="text" [formControl]="searchControl"
+                    placeholder="Escribe el nombre del personaje..." class="w-full px-4 py-2 rounded-md 
+                        bg-gray-700 text-white focus:outline-none 
+                         focus:ring-2 focus:ring-amber-500">
             </div>
-            <li class="text-slate-200 group-hover:text-amber-400 group-hover:">{{ character.name }}</li>
-            <li class="text-slate-200 group-hover:text-amber-400 group-hover:">{{ character.status }}</li>
 
+            <!-- Filtros -->
+            <aside class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <!-- Filtro por estado -->
+                <div>
+                    <label for="status" class="block text-sm font-medium text-amber-400 mb-1">Estado</label>
+                    <select id="status" [formControl]="statusControl"
+                        class="w-full px-4 py-2 rounded-md bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-amber-500">
+                        @for (status of statusOptions; track status) {
+                        <option [value]="status">
+                            {{ status || 'Todos' | translate:'status' }}
+                        </option>
+                        }
+                    </select>
+                </div>
+
+                <!-- Filtro por género -->
+                <div>
+                    <label for="gender" class="block text-sm font-medium text-amber-400 mb-1">Género</label>
+                    <select id="gender" [formControl]="genderControl"
+                        class="w-full px-4 py-2 rounded-md bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-amber-500">
+                        @for (gender of genderOptions; track gender) {
+                        <option [value]="gender">
+                            {{ gender || 'Todos' | translate:'gender'  }}
+                        </option>
+                        }
+                    </select>
+                </div>
+            </aside>
+
+            <!-- Botón para limpiar filtros -->
+            <button (click)="clearFilters()"
+                class="px-4 h-12 py-2 bottom-0 bg-gray-600 hover:bg-gray-500 rounded-md text-white transition-colors">
+                Limpiar filtros
+            </button>
+        </aside>
+    </section>
+
+    <!--  un botón para mostrar/ocultar favoritos -->
+    <section class="container w-full px-4 mb-4 flex justify-between">
+        <button (click)="toggleShowFavorites()"
+            class="px-4 py-2 bg-amber-600 hover:bg-amber-700 rounded-md text-white transition-colors">
+            {{ showFavorites ? 'Mostrar Todos' : 'Mostrar Favoritos' }}
+        </button>
+    </section>
+
+    <!-- Cuerpo con las imagenes renderizadas con el titulo -->
+    <div class="container w-screen gap-6 m-auto">
+        @if (showFavorites) {
+        @if (favoriteCharacters.length > 0) {
+        @for (character of favoriteCharacters; track character.id) {
+        <ul class="flex flex-col justify-center m-auto text-center group relative">
+            <!-- Botón de favoritos -->
+            <button (click)="toggleFavorite(character, $event)"
+                class="absolute top-2 right-2 z-10 p-2 bg-gray-800/70 rounded-full">
+                @if (isFavorite(character)) {
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-amber-400" viewBox="0 0 20 20"
+                    fill="currentColor">
+                    <path fill-rule="evenodd"
+                        d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"
+                        clip-rule="evenodd" />
+                </svg>
+                } @else {
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                </svg>
+                }
+            </button>
+
+            <div class="ff w-full relative mx-auto h-auto overflow-hidden rounded-lg cursor-pointer"
+                (click)="openModal(character)">
+                <img class="rounded-md transition-all duration-300 hover:scale-110" src="{{character.image}}"
+                    alt="Avatar de {{character.name}}">
+            </div>
+            <li class="text-slate-200 group-hover:text-amber-400">{{ character.name }}</li>
+            <li class="text-slate-200 group-hover:text-amber-400">{{ character.status }}</li>
         </ul>
+        }
+        } @else {
+        <div class="text-center py-12 col-span-full">
+            <p class="text-xl text-amber-400">No tienes personajes favoritos aún</p>
+        </div>
+        }
+        } @else {
+        @for (character of characters; track character.id) {
+        <ul class="flex flex-col justify-center m-auto text-center group relative">
+            <!-- Botón de favoritos -->
+            <button (click)="toggleFavorite(character, $event)"
+                class="absolute top-2 right-2 z-10 p-2 bg-gray-800/70 rounded-full">
+                @if (isFavorite(character)) {
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-amber-400" viewBox="0 0 20 20"
+                    fill="currentColor">
+                    <path fill-rule="evenodd"
+                        d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"
+                        clip-rule="evenodd" />
+                </svg>
+                } @else {
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                </svg>
+                }
+            </button>
+
+            <div class="ff w-full relative mx-auto h-auto overflow-hidden rounded-lg cursor-pointer"
+                (click)="openModal(character)">
+                <img class="rounded-md transition-all duration-300 hover:scale-110" src="{{character.image}}"
+                    alt="Avatar de {{character.name}}">
+            </div>
+            <li class="text-slate-200 group-hover:text-amber-400">{{ character.name }}</li>
+            <li class="text-slate-200 group-hover:text-amber-400">{{ character.status }}</li>
+        </ul>
+        }
         }
     </div>
 
+    @if (!showFavorites) {
+    <!-- Paginación -->
+    <section>
+        <div class="flex justify-center items-center my-8 gap-4 pb-3">
+            <button (click)="previousPage()" [disabled]="currentPage === 1"
+                class="px-4 py-2 bg-amber-600 rounded-md hover:bg-amber-700 disabled:bg-gray-500 disabled:cursor-not-allowed">
+                Anterior
+            </button>
+
+            <span class="text-slate-200">
+                Página {{currentPage}} de {{totalPages}}
+            </span>
+
+            <button (click)="nextPage()" [disabled]="currentPage === totalPages"
+                class="px-4 py-2 bg-amber-600 rounded-md hover:bg-amber-700 disabled:bg-gray-500 disabled:cursor-not-allowed">
+                Siguiente
+            </button>
+        </div>
+    </section>
+    }
+        <!-- Modal de detalles del personaje -->
+        @if (showModal && selectedCharacter) {
+        <div class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70 p-4"
+            (click)="closeModal()">
+            <div class="relative bg-gray-800 rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+                (click)="$event.stopPropagation()">
+                <!-- Botón de cerrar -->
+                <button class="absolute top-4 right-4 text-amber-400 hover:text-amber-300" (click)="closeModal()">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+
+                <!-- Contenido del modal -->
+                <div class="p-6">
+                    <div class="flex flex-col md:flex-row gap-6">
+                        <!-- Imagen del personaje -->
+                        <div class="flex-shrink-0">
+                            <img class="w-full h-auto max-w-xs rounded-lg" src="{{selectedCharacter.image}}"
+                                alt="{{selectedCharacter.name}}">
+                        </div>
+
+                        <!-- Información del personaje -->
+                        <div class="text-slate-300">
+                            <h2 class="text-3xl font-bold text-amber-400 mb-4">{{ selectedCharacter.name }}</h2>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <h3 class="text-lg font-semibold text-amber-300">Estado</h3>
+                                    <p>{{ selectedCharacter.status |  translate:'status' }}</p>
+                                </div>
+
+                                <div>
+                                    <h3 class="text-lg font-semibold text-amber-300">Género</h3>
+                                    <p>{{ selectedCharacter.gender | translate:'gender' }}</p>
+                                </div>
+
+                                <div>
+                                    <h3 class="text-lg font-semibold text-amber-300">Especie</h3>
+                                    <p>{{ selectedCharacter.species || 'Desconocida' }}</p>
+                                </div>
+
+                                <div>
+                                    <h3 class="text-lg font-semibold text-amber-300">Origen</h3>
+                                    <p>{{ selectedCharacter.origin.name || 'Desconocido' }}</p>
+                                </div>
+
+                                <div class="md:col-span-2">
+                                    <h3 class="text-lg font-semibold text-amber-300">Ubicación actual</h3>
+                                    <p>{{ selectedCharacter.location.name || 'Desconocida' }}</p>
+                                </div>
+
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        }
+
 </section>
-
-
-
-
 
 <router-outlet></router-outlet>
