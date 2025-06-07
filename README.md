@@ -15,20 +15,8 @@ Aplicación web para explorar el universo de Rick & Morty implementando:
 🔗 **Demo**: [https://prueba-pulzo.web.app/home](https://prueba-pulzo.web.app/home)
 
 ## 🏗 Estructura del Proyecto
-src/
-├── 📂 data/ # Infraestructura y APIs
-│ ├── repositories/
-│ └── datasources/
-│
-├── 📂 domain/ # Lógica de negocio
-│ ├── entities/
-│ ├── repositories/
-│ └── usecases/
-│
-└── 📂 presentation/ # Interfaz de usuario
-├── pages/
-├── components/
-└── shared/
+![alt text](image.png)
+
 
 ## 🚀 Cómo Ejecutar
 

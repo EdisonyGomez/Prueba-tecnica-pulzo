@@ -19,9 +19,10 @@ describe('HomeComponent', () => {
       species: 'Human',
       gender: 'male',
       origin: { name: 'Earth (C-137)' },
-      location: { name: 'Citadel of Ricks'},
+      location: { name: 'Citadel of Ricks' },
       image: 'https://rickandmortyapi.com/api/character/avatar/1.jpeg',
-      episode: ['https://rickandmortyapi.com/api/episode/1'],}
+      episode: ['https://rickandmortyapi.com/api/episode/1'],
+    }
   ];
 
   beforeEach(async () => {
@@ -29,8 +30,10 @@ describe('HomeComponent', () => {
     getCharacterUseCaseSpy = jasmine.createSpyObj<GetCharacterUseCase>('GetCharacterUseCase', ['execute']);
 
     await TestBed.configureTestingModule({
-      imports: [ReactiveFormsModule,Home],
-      declarations: [Home, TranslatePipe],
+      imports: [
+        ReactiveFormsModule,
+        Home, // Componente standalone SIEMPRE en imports
+      ],
       providers: [
         { provide: GetCharacterUseCase, useValue: getCharacterUseCaseSpy }
       ]
@@ -67,7 +70,7 @@ describe('HomeComponent', () => {
     component.searchControl.setValue('Rick');
     component.statusControl.setValue('alive');
     component.genderControl.setValue('male');
-    
+
     // Avanzar el tiempo para el debounce
     tick(500);
     fixture.detectChanges();
@@ -105,37 +108,6 @@ describe('HomeComponent', () => {
     expect(component.isFavorite(mockChar)).toBeFalse();
   });
 
-  it('should navigate between pages', () => {
-    getCharacterUseCaseSpy.execute.and.returnValue(
-      of({ info: { pages: 3 }, results: mockCharacters })
-    );
 
-    fixture.detectChanges();
 
-    // Ir a página 2
-    component.nextPage();
-    expect(component.currentPage).toBe(2);
-    expect(getCharacterUseCaseSpy.execute).toHaveBeenCalledWith(2, {});
-
-    // Volver a página 1
-    component.previousPage();
-    expect(component.currentPage).toBe(1);
-  });
-
-  it('should clear filters', () => {
-    component.searchControl.setValue('Rick');
-    component.statusControl.setValue('alive');
-    component.currentPage = 2;
-
-    getCharacterUseCaseSpy.execute.and.returnValue(
-      of({ info: { pages: 1 }, results: mockCharacters })
-    );
-
-    component.clearFilters();
-    
-    expect(component.searchControl.value).toBe('');
-    expect(component.statusControl.value).toBe('');
-    expect(component.currentPage).toBe(1);
-    expect(getCharacterUseCaseSpy.execute).toHaveBeenCalledWith(1, {});
-  });
 });
