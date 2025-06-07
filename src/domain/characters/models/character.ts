@@ -9,11 +9,9 @@ export interface Character {
     species: string;
     origin:    {
         name: string;
-        url: string;
     };
     location:    {
         name: string;
-        url: string;
     };
-    episode: Episode[];
+    episode: string[];
 }

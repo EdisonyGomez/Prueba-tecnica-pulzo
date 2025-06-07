@@ -7,10 +7,26 @@ import { catchError, map, Observable, of } from 'rxjs';
 @Injectable({
   providedIn: 'root'
 })
+
+/**
+ * Servicio que maneja la comunicación directa con la API de Rick and Morty.
+ * Encapsula todas las operaciones HTTP relacionadas con personajes.
+ */
 export class CharactersApi {
   private http = inject(HttpClient);
 
-
+ /**
+   * Obtiene personajes paginados desde la API con filtros opcionales
+   * @param page Número de página solicitada
+   * @param filters Objeto con criterios de filtrado:
+   *   - name: Cadena para buscar en nombres
+   *   - status: Estado del personaje (alive/dead/unknown)
+   *   - gender: Género del personaje
+   * @returns Observable con la respuesta estructurada:
+   *   - info: Metadatos de paginación
+   *   - results: Array de personajes mapeados
+   * En caso de error, retorna objeto vacío
+   */
 getCharacters(page: number , filters: {name?: string, status?: string, gender?: string} = {}): Observable<{info: any, results: Character[]}> {
   let url = `${environment.apiUrl}/character/?page=${page}`;
   
@@ -31,11 +47,9 @@ getCharacters(page: number , filters: {name?: string, status?: string, gender?: 
         species: character.species,
         origin: {
           name: character.origin.name,
-          url: character.origin.url
         },
         location: {
           name: character.location.name,
-          url: character.location.url
         },
         episode: character.episode
       }))
